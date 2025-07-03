@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBPS PO 2025 - Your Interactive Preparation Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: A task-oriented, non-linear dashboard SPA. The structure includes a main Dashboard for a quick overview (countdown, key stats), followed by tabbed sections for detailed Exam Deconstruction (Pattern, Process), a Syllabus Explorer (interactive accordions), a visual Strategy Roadmap (stepper), a Resource Hub, and Interview Prep. This structure was chosen to empower the user to access information based on their immediate need, making a large volume of data feel manageable and actionable, which is ideal for a highly motivated but potentially overwhelmed exam aspirant. -->
+    <!-- Visualization & Content Choices: Report Info (e.g., Exam Dates Table) -> Goal (e.g., Inform) -> Viz/Method (e.g., Interactive Timeline with HTML/JS) -> Interaction (e.g., Hover/Click for details). Donut charts (Chart.js) are used to compare exam section weights, which is more intuitive than tables. An accordion (HTML/JS) is used for the syllabus to prevent information overload. A stepper (HTML/JS) is used for the 6-month strategy to make the long-term plan feel achievable. This approach transforms static text and tables into engaging, user-centric components. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .active-nav { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
+        .inactive-nav { color: #6b7280; border-bottom: 2px solid transparent; }
+        .active-tab { background-color: #3b82f6; color: white; }
+        .inactive-tab { background-color: #e5e7eb; color: #374151; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .chart-container { position: relative; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto; height: 320px; max-height: 350px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; max-height: 400px; } }
+        .stepper-item.active .stepper-circle { background-color: #3b82f6; color: white; }
+        .stepper-item .stepper-circle { background-color: #e5e7eb; color: #6b7280; }
+        .stepper-item.active .stepper-line { background-color: #3b82f6; }
+        .stepper-item .stepper-line { background-color: #e5e7eb; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 lg:px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-blue-600">IBPS PO 2025 PrepHub</h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-2 lg:space-x-4">
+                    <a href="#dashboard" class="nav-link px-3 py-2 text-sm font-medium transition-colors duration-200">Dashboard</a>
+                    <a href="#exam-info" class="nav-link px-3 py-2 text-sm font-medium transition-colors duration-200">Exam Deconstructed</a>
+                    <a href="#syllabus" class="nav-link px-3 py-2 text-sm font-medium transition-colors duration-200">Syllabus Explorer</a>
+                    <a href="#strategy" class="nav-link px-3 py-2 text-sm font-medium transition-colors duration-200">Strategy Roadmap</a>
+                    <a href="#resources" class="nav-link px-3 py-2 text-sm font-medium transition-colors duration-200">Resource Hub</a>
+                    <a href="#interview" class="nav-link px-3 py-2 text-sm font-medium transition-colors duration-200">Interview Prep</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="p-2 rounded-md">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-4 6h16"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden pb-3">
+                <a href="#dashboard" class="block nav-link px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="#exam-info" class="block nav-link px-3 py-2 rounded-md text-base font-medium">Exam Deconstructed</a>
+                <a href="#syllabus" class="block nav-link px-3 py-2 rounded-md text-base font-medium">Syllabus Explorer</a>
+                <a href="#strategy" class="block nav-link px-3 py-2 rounded-md text-base font-medium">Strategy Roadmap</a>
+                <a href="#resources" class="block nav-link px-3 py-2 rounded-md text-base font-medium">Resource Hub</a>
+                <a href="#interview" class="block nav-link px-3 py-2 rounded-md text-base font-medium">Interview Prep</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="dashboard" class="scroll-mt-20 text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Your Journey to a Banking Career Starts Now</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-8">This hub is your personal guide to cracking the IBPS PO 2025 exam. Let's begin!</p>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-12">
+                <p class="text-xl font-medium text-gray-700 mb-2">Countdown to Prelims Exam (August 17, 2025)</p>
+                <div id="countdown" class="flex justify-center space-x-4 md:space-x-8 text-blue-600">
+                    <div><span id="days" class="text-4xl md:text-6xl font-bold"></span><p class="text-sm md:text-base text-gray-500">Days</p></div>
+                    <div><span id="hours" class="text-4xl md:text-6xl font-bold"></span><p class="text-sm md:text-base text-gray-500">Hours</p></div>
+                    <div><span id="minutes" class="text-4xl md:text-6xl font-bold"></span><p class="text-sm md:text-base text-gray-500">Minutes</p></div>
+                    <div><span id="seconds" class="text-4xl md:text-6xl font-bold"></span><p class="text-sm md:text-base text-gray-500">Seconds</p></div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 text-left">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Total Vacancies</h3>
+                    <p class="text-4xl font-bold text-blue-600">5,208</p>
+                    <p class="text-sm text-gray-500 mt-1">(Tentative)</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Participating Banks</h3>
+                    <p class="text-4xl font-bold text-blue-600">11</p>
+                    <p class="text-sm text-gray-500 mt-1">Public Sector Banks</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Selection Stages</h3>
+                    <p class="text-4xl font-bold text-blue-600">3</p>
+                    <p class="text-sm text-gray-500 mt-1">Prelims, Mains & Interview</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="exam-info" class="scroll-mt-20 mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2">Exam Deconstructed</h2>
+            <p class="text-lg text-gray-600 text-center mb-10">Understand the structure, stages, and scoring of the IBPS PO exam. Knowing the blueprint is the first step to success.</p>
+            
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-200">
+                <div class="mb-6 flex justify-center border-b border-gray-200">
+                    <button class="tab-button flex-1 py-3 px-4 text-sm md:text-base font-semibold focus:outline-none transition-colors duration-300" data-target="process">Selection Process</button>
+                    <button class="tab-button flex-1 py-3 px-4 text-sm md:text-base font-semibold focus:outline-none transition-colors duration-300" data-target="prelims">Prelims Pattern</button>
+                    <button class="tab-button flex-1 py-3 px-4 text-sm md:text-base font-semibold focus:outline-none transition-colors duration-300" data-target="mains">Mains Pattern</button>
+                </div>
+
+                <div id="process" class="tab-content">
+                    <h3 class="text-2xl font-semibold text-center mb-6">The 3-Stage Journey to Becoming a PO</h3>
+                     <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="text-center p-4 rounded-lg bg-blue-50 border border-blue-200 w-full md:w-1/4">
+                            <div class="text-blue-600 text-2xl font-bold mb-2">Stage 1</div>
+                            <h4 class="font-semibold text-lg">Preliminary Exam</h4>
+                            <p class="text-sm text-gray-600 mt-1">Qualifying Nature</p>
+                        </div>
+                        <div class="text-4xl text-blue-400 font-light">&#8594;</div>
+                        <div class="text-center p-4 rounded-lg bg-green-50 border border-green-200 w-full md:w-1/4">
+                             <div class="text-green-600 text-2xl font-bold mb-2">Stage 2</div>
+                            <h4 class="font-semibold text-lg">Main Exam</h4>
+                            <p class="text-sm text-gray-600 mt-1">Counts for Merit</p>
+                        </div>
+                        <div class="text-4xl text-green-400 font-light">&#8594;</div>
+                        <div class="text-center p-4 rounded-lg bg-purple-50 border border-purple-200 w-full md:w-1/4">
+                             <div class="text-purple-600 text-2xl font-bold mb-2">Stage 3</div>
+                            <h4 class="font-semibold text-lg">Interview</h4>
+                            <p class="text-sm text-gray-600 mt-1">Final Selection</p>
+                        </div>
+                    </div>
+                     <div class="mt-8 text-center">
+                        <h4 class="text-xl font-semibold mb-4">Final Merit Calculation</h4>
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="text-left p-6 bg-gray-50 rounded-lg">
+                                 <p>The final merit list is prepared based on the marks obtained in the **Main Examination and the Interview**. The Preliminary exam is only for qualification and its marks are not considered for the final score.</p>
+                                 <p class="mt-4">The weightage given to the Mains and Interview is in the ratio of **80:20** respectively. This highlights the immense importance of scoring well in the Mains exam, while a good interview performance can be a significant deciding factor.</p>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="meritChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="prelims" class="tab-content hidden">
+                    <h3 class="text-2xl font-semibold text-center mb-6">Prelims Exam Pattern (Qualifying)</h3>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="text-left p-6 bg-gray-50 rounded-lg">
+                            <p>The Prelims is an online exam with 100 questions for 100 marks, to be completed in 60 minutes. Each section has a strict time limit of 20 minutes. There is a **negative marking of 0.25 marks** for each wrong answer. You must clear both sectional and overall cut-offs to qualify for the Mains.</p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside">
+                                <li><strong>Total Questions:</strong> 100</li>
+                                <li><strong>Total Marks:</strong> 100</li>
+                                <li><strong>Total Duration:</strong> 60 Minutes (Sectional Timing)</li>
+                            </ul>
+                        </div>
+                        <div class="chart-container">
+                             <canvas id="prelimsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mains" class="tab-content hidden">
+                    <h3 class="text-2xl font-semibold text-center mb-6">Mains Exam Pattern (Merit-Based)</h3>
+                    <div class="grid lg:grid-cols-2 gap-8 items-center">
+                        <div class="text-left p-6 bg-gray-50 rounded-lg">
+                             <p>The Mains exam is the most critical stage. It consists of an objective test and a descriptive test, both held online on the same day. There is a **negative marking of 0.25 marks** for each wrong answer in the objective part.</p>
+                             <div class="mt-4">
+                                <p class="font-semibold">Objective Test:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li><strong>Total Questions:</strong> 145</li>
+                                    <li><strong>Total Marks:</strong> 200</li>
+                                    <li><strong>Total Duration:</strong> 160 Minutes</li>
+                                </ul>
+                             </div>
+                             <div class="mt-4">
+                                <p class="font-semibold">Descriptive Test:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li><strong>Tasks:</strong> 1 Essay & 1 Letter</li>
+                                    <li><strong>Total Marks:</strong> 25</li>
+                                    <li><strong>Total Duration:</strong> 30 Minutes</li>
+                                </ul>
+                             </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="mainsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="syllabus" class="scroll-mt-20 mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2">Syllabus Explorer</h2>
+            <p class="text-lg text-gray-600 text-center mb-10">Navigate the complete syllabus for Prelims and Mains. Click on any subject to expand and see the detailed topics.</p>
+            
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-200">
+                <div class="flex justify-center border-b border-gray-200 mb-6">
+                     <button class="syllabus-toggle-button flex-1 py-3 px-4 text-sm md:text-base font-semibold focus:outline-none transition-colors duration-300" data-target="prelims-syllabus">Prelims Syllabus</button>
+                     <button class="syllabus-toggle-button flex-1 py-3 px-4 text-sm md:text-base font-semibold focus:outline-none transition-colors duration-300" data-target="mains-syllabus">Mains Syllabus</button>
+                </div>
+
+                <div id="prelims-syllabus" class="syllabus-content">
+                    <div class="space-y-4" id="prelims-accordion-container"></div>
+                </div>
+                <div id="mains-syllabus" class="syllabus-content hidden">
+                    <div class="space-y-4" id="mains-accordion-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="strategy" class="scroll-mt-20 mb-16">
+             <h2 class="text-3xl font-bold text-center mb-2">Your 6-Month Preparation Roadmap</h2>
+             <p class="text-lg text-gray-600 text-center mb-10">Success is a marathon, not a sprint. Follow this phased strategy to systematically cover the syllabus and maximize your score.</p>
+             <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-lg border border-gray-200">
+                <div class="flex flex-col md:flex-row">
+                    <div class="w-full md:w-1/3 mb-8 md:mb-0">
+                        <div id="stepper" class="flex md:flex-col justify-between md:justify-start">
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3 md:pl-8">
+                        <div id="strategy-content"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="resources" class="scroll-mt-20 mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2">Resource Hub</h2>
+            <p class="text-lg text-gray-600 text-center mb-10">Equip yourself with the best study materials. Here are top recommendations for books and online platforms.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                    <h3 class="font-bold text-xl mb-4">Recommended Books</h3>
+                    <p class="text-gray-600 mb-4">Focus on one reliable book per subject to build a strong foundation. This curated list will help you get started.</p>
+                    <button onclick="showModal('book-modal')" class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">View Book List</button>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                    <h3 class="font-bold text-xl mb-4">Previous Year Papers</h3>
+                    <p class="text-gray-600 mb-4">Solving past papers is crucial to understand the exam pattern, difficulty level, and time management.</p>
+                     <a href="https://testbook.com/ibps-po/previous-year-papers" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">Access PYQs</a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                    <h3 class="font-bold text-xl mb-4">Online Platforms</h3>
+                    <p class="text-gray-600 mb-4">Leverage online coaching and test series for structured learning, mock tests, and expert guidance.</p>
+                    <button onclick="showModal('platform-modal')" class="w-full bg-purple-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-600 transition-colors">Explore Platforms</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="interview" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2">Ace The Interview</h2>
+            <p class="text-lg text-gray-600 text-center mb-10">The final hurdle. Prepare to showcase your personality, knowledge, and suitability for a banking career.</p>
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 grid md:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Key Focus Areas</h3>
+                        <ul class="space-y-2 list-disc list-inside text-gray-700">
+                            <li><strong>Banking Knowledge:</strong> Understand basic terms, financial concepts, and the role of the RBI.</li>
+                            <li><strong>Current Affairs:</strong> Be aware of recent national, international, and economic events.</li>
+                            <li><strong>Personal Profile:</strong> Be ready to discuss your background, strengths, weaknesses, and why you want a banking career.</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h3 class="text-xl font-semibold mb-2">Interview Structure</h3>
+                        <ul class="space-y-2 list-disc list-inside text-gray-700">
+                            <li><strong>Duration:</strong> 15-20 minutes</li>
+                            <li><strong>Marks:</strong> 100</li>
+                            <li><strong>Weightage:</strong> 20% in final merit list</li>
+                             <li><strong>Minimum Score:</strong> 40% to qualify</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="p-6 bg-blue-50 rounded-lg border border-blue-200">
+                    <h3 class="text-xl font-semibold mb-3 text-blue-800">Top Tips for Success</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start"><span class="text-blue-600 font-bold mr-2">&#10003;</span><span>Project confidence and maintain a professional demeanor.</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 font-bold mr-2">&#10003;</span><span>Communicate clearly and be honest in your answers.</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 font-bold mr-2">&#10003;</span><span>Do not argue with the interview panel; maintain a respectful tone.</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 font-bold mr-2">&#10003;</span><span>Practice mock interviews to build communication skills and reduce anxiety.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto py-6 px-4 text-center">
+            <p>"The secret to getting ahead is getting started." - Mark Twain</p>
+            <p class="text-sm text-gray-400 mt-2">This is an informational tool. Always refer to the official IBPS website for final details.</p>
+        </div>
+    </footer>
+
+    <div id="book-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="text-2xl font-bold">Recommended Books</h3>
+                <button onclick="closeModal('book-modal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="book-list-container" class="space-y-4"></div>
+        </div>
+    </div>
+    
+    <div id="platform-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4">
+         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl">
+             <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="text-2xl font-bold">Top Online Platforms</h3>
+                <button onclick="closeModal('platform-modal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-semibold text-lg">Physics Wallah (PW)</h4>
+                    <p class="text-gray-600">Offers comprehensive courses with live classes, extensive practice questions, and mock tests for both Prelims and Mains.</p>
+                </div>
+                 <div>
+                    <h4 class="font-semibold text-lg">Testbook</h4>
+                    <p class="text-gray-600">Collaborates with various institutions to provide a wide array of coaching options and test series.</p>
+                </div>
+                 <div>
+                    <h4 class="font-semibold text-lg">Guidely</h4>
+                    <p class="text-gray-600">Provides specialized mock test series designed based on the latest exam patterns, available in bilingual formats.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const data = {
+        prelimsSyllabus: {
+            "English Language": ["Reading Comprehension", "Cloze Test", "Para Jumbles", "Error Spotting", "Sentence Correction", "Fill in the Blanks", "Word Swap"],
+            "Quantitative Aptitude": ["Simplification & Approximation", "Number Series", "Data Interpretation (DI)", "Quadratic Equations", "Arithmetic Problems (Percentage, Profit & Loss, Time & Work, etc.)"],
+            "Reasoning Ability": ["Puzzles", "Seating Arrangement", "Syllogism", "Inequalities", "Coding-Decoding", "Blood Relations", "Direction Sense"]
+        },
+        mainsSyllabus: {
+            "Reasoning & Computer Aptitude": ["Advanced Puzzles & Seating Arrangements", "Logical & Critical Reasoning", "Data Sufficiency", "Input-Output", "Computer Fundamentals", "Networking", "MS Office"],
+            "Data Analysis & Interpretation": ["Advanced Data Interpretation (Caselets, Radar)", "Data Sufficiency", "Quantity Comparison", "Arithmetic (higher level)", "Number Series"],
+            "English Language": ["Advanced Reading Comprehension", "Vocabulary (Synonyms, Antonyms)", "Grammar", "Verbal Ability (Para Completion, Connectors)", "Descriptive: Essay & Letter Writing"],
+            "General/Economy/Banking Awareness": ["Current Affairs (last 6 months)", "Banking & Financial Awareness", "Static GK", "Government Schemes", "RBI Circulars"]
+        },
+        strategy: [
+            {
+                title: "Phase 1: Foundation (Months 1-2)",
+                content: "Focus on building a strong conceptual understanding. Study fundamentals from reliable books, make concise notes, and solve basic questions after each chapter. Begin the daily habit of reading current affairs."
+            },
+            {
+                title: "Phase 2: Practice (Months 3-4)",
+                content: "Transition to comprehensive syllabus coverage. Practice a wide variety of topic-wise questions, increasing the difficulty level. Start attempting sectional tests to improve time management and accuracy."
+            },
+            {
+                title: "Phase 3: Revision & Analysis (Month 5)",
+                content: "Dedicate this month to systematic revision and performance analysis. Take full-length mock tests regularly and, most importantly, analyze them in detail to identify and work on your weak areas."
+            },
+            {
+                title: "Phase 4: Refinement (Month 6)",
+                content: "This is the final stretch. Continue with intensive mock tests under exam conditions. Maintain a balanced study schedule for both Prelims and Mains topics. Start specific preparation for the interview."
+            }
+        ],
+        books: {
+            "Quantitative Aptitude": ["Quantitative Aptitude for Competitive Exams by R.S Aggarwal", "Data Interpretation by Arun Sharma"],
+            "Reasoning Ability": ["A New Approach to Reasoning by B S Sijwali", "Analytical Reasoning by M.K. Pandey"],
+            "English Language": ["Word Power Made Easy by Norman Lewis", "Objective General English by S.P. Bakshi"],
+            "General & Banking Awareness": ["Banking Awareness by Arihant Publications", "Manorama Yearbook"],
+            "Computer Aptitude": ["Objective Computer Awareness by R. Pillai"]
+        }
+    };
+
+    function setupCountdown() {
+        const countDownDate = new Date("Aug 17, 2025 09:00:00").getTime();
+        const countdownElement = document.getElementById('countdown');
+        if (!countdownElement) return;
+
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById("days").innerText = String(days).padStart(2, '0');
+            document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+            document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+
+            if (distance < 0) {
+                clearInterval(x);
+                countdownElement.innerHTML = "<p class='text-2xl font-bold'>The Exam has Started. Good Luck!</p>";
+            }
+        }, 1000);
+    }
+    
+    function setupTabs() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function switchTab(targetId) {
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(targetId).classList.remove('hidden');
+
+            tabButtons.forEach(button => {
+                if (button.dataset.target === targetId) {
+                    button.classList.add('active-tab');
+                    button.classList.remove('inactive-tab');
+                } else {
+                    button.classList.remove('active-tab');
+                    button.classList.add('inactive-tab');
+                }
+            });
+        }
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                switchTab(button.dataset.target);
+            });
+        });
+        
+        switchTab('process');
+    }
+
+    function createChart(ctx, type, labels, data, backgroundColor, label) {
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: backgroundColor,
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            boxWidth: 12,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function setupCharts() {
+        createChart(document.getElementById('meritChart')?.getContext('2d'), 'doughnut', ['Mains Exam (80%)', 'Interview (20%)'], [80, 20], ['#3b82f6', '#93c5fd'], 'Final Merit Weightage');
+        createChart(document.getElementById('prelimsChart')?.getContext('2d'), 'pie', ['English (30)', 'Quants (35)', 'Reasoning (35)'], [30, 35, 35], ['#fbbf24', '#f87171', '#60a5fa'], 'Prelims Questions');
+        createChart(document.getElementById('mainsChart')?.getContext('2d'), 'pie', ['Reasoning & Comp (60)', 'GA (50)', 'English (40)', 'DI (50)'], [60, 50, 40, 50], ['#60a5fa', '#34d399', '#fbbf24', '#f87171'], 'Mains Objective Marks');
+    }
+
+    function createAccordion(containerId, syllabusData) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        Object.entries(syllabusData).forEach(([subject, topics], index) => {
+            const subjectId = `${containerId}-${index}`;
+            const item = document.createElement('div');
+            item.className = 'border border-gray-200 rounded-lg';
+
+            const button = document.createElement('button');
+            button.className = 'accordion-button w-full flex justify-between items-center p-4 text-left font-semibold bg-gray-100 hover:bg-gray-200 transition-colors';
+            button.innerHTML = `<span>${subject}</span><svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+            
+            const content = document.createElement('div');
+            content.className = 'accordion-content bg-white p-4 border-t border-gray-200';
+            const list = document.createElement('ul');
+            list.className = 'list-disc list-inside space-y-2 text-gray-700';
+            topics.forEach(topic => {
+                const li = document.createElement('li');
+                li.textContent = topic;
+                list.appendChild(li);
+            });
+            content.appendChild(list);
+
+            item.appendChild(button);
+            item.appendChild(content);
+            container.appendChild(item);
+
+            button.addEventListener('click', () => {
+                const icon = button.querySelector('svg');
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.classList.remove('rotate-180');
+                } else {
+                    document.querySelectorAll('.accordion-content').forEach(el => el.style.maxHeight = null);
+                    document.querySelectorAll('.accordion-button svg').forEach(el => el.classList.remove('rotate-180'));
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.classList.add('rotate-180');
+                }
+            });
+        });
+    }
+
+    function setupSyllabusExplorer() {
+        const toggleButtons = document.querySelectorAll('.syllabus-toggle-button');
+        const syllabusContents = document.querySelectorAll('.syllabus-content');
+        
+        function switchSyllabus(targetId) {
+            syllabusContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(targetId).classList.remove('hidden');
+
+            toggleButtons.forEach(button => {
+                if (button.dataset.target === targetId) {
+                    button.classList.add('active-tab');
+                    button.classList.remove('inactive-tab');
+                } else {
+                    button.classList.remove('active-tab');
+                    button.classList.add('inactive-tab');
+                }
+            });
+        }
+        
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', () => switchSyllabus(button.dataset.target));
+        });
+
+        createAccordion('prelims-accordion-container', data.prelimsSyllabus);
+        createAccordion('mains-accordion-container', data.mainsSyllabus);
+        
+        switchSyllabus('prelims-syllabus');
+    }
+
+    function setupStrategyStepper() {
+        const stepperContainer = document.getElementById('stepper');
+        const contentContainer = document.getElementById('strategy-content');
+        if (!stepperContainer || !contentContainer) return;
+        
+        data.strategy.forEach((item, index) => {
+            const stepperItem = document.createElement('div');
+            stepperItem.className = 'stepper-item flex items-center md:flex-row md:items-start w-full';
+            stepperItem.dataset.index = index;
+            
+            const circle = document.createElement('div');
+            circle.className = 'stepper-circle w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors';
+            circle.textContent = index + 1;
+            
+            const titleContainer = document.createElement('div');
+            titleContainer.className = 'ml-4 md:text-left';
+            const title = document.createElement('h4');
+            title.className = 'font-semibold cursor-pointer';
+            title.textContent = item.title;
+            titleContainer.appendChild(title);
+            
+            if (index < data.strategy.length - 1) {
+                const line = document.createElement('div');
+                line.className = 'stepper-line hidden md:block h-16 w-0.5 mt-2 transition-colors';
+                titleContainer.appendChild(line);
+            }
+            
+            stepperItem.appendChild(circle);
+            stepperItem.appendChild(titleContainer);
+            stepperContainer.appendChild(stepperItem);
+        });
+
+        const stepperItems = document.querySelectorAll('.stepper-item');
+
+        function activateStep(index) {
+            stepperItems.forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+            contentContainer.innerHTML = `
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <h3 class="text-xl font-bold mb-3">${data.strategy[index].title}</h3>
+                    <p class="text-gray-700 leading-relaxed">${data.strategy[index].content}</p>
+                </div>
+            `;
+        }
+
+        stepperItems.forEach(item => {
+            item.addEventListener('click', () => {
+                activateStep(parseInt(item.dataset.index));
+            });
+        });
+        
+        activateStep(0);
+    }
+    
+    function setupNavLinks() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active-nav');
+                        link.classList.add('inactive-nav');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active-nav');
+                            link.classList.remove('inactive-nav');
+                        }
+                    });
+                }
+            });
+        }, { rootMargin: '-50% 0px -50% 0px' });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                if (document.getElementById('mobile-menu').classList.contains('hidden') === false) {
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+    }
+
+    function setupMobileMenu() {
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    function populateBookModal() {
+        const container = document.getElementById('book-list-container');
+        if(!container) return;
+        Object.entries(data.books).forEach(([subject, bookList]) => {
+            const subjectDiv = document.createElement('div');
+            const h4 = document.createElement('h4');
+            h4.className = "text-lg font-semibold text-gray-800 mb-2";
+            h4.textContent = subject;
+            subjectDiv.appendChild(h4);
+
+            const ul = document.createElement('ul');
+            ul.className = "list-disc list-inside space-y-1 text-gray-600";
+            bookList.forEach(book => {
+                const li = document.createElement('li');
+                li.textContent = book;
+                ul.appendChild(li);
+            });
+            subjectDiv.appendChild(ul);
+            container.appendChild(subjectDiv);
+        });
+    }
+
+    window.showModal = function(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+        document.getElementById(modalId).classList.add('flex');
+    }
+
+    window.closeModal = function(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        document.getElementById(modalId).classList.remove('flex');
+    }
+
+    setupCountdown();
+    setupTabs();
+    setupCharts();
+    setupSyllabusExplorer();
+    setupStrategyStepper();
+    setupNavLinks();
+    setupMobileMenu();
+    populateBookModal();
+});
+</script>
+
+</body>
+</html>
